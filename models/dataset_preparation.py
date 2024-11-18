@@ -54,3 +54,24 @@ def preprocess_dataset(X):
     print("Valores nulos después del preprocesamiento:")
     print(X_imputed.isnull().sum())
     return X_imputed
+
+# Ruta principal
+def preprocess_pipeline(data_path):
+    """Pipeline para cargar, dividir y preprocesar el dataset."""
+    # Cargar datos
+    df = load_kdd_dataset(data_path)
+
+    # Dividir en conjuntos
+    train_set, val_set, test_set = split_dataset(df, stratify_col="protocol_type")
+
+    # Preprocesar el conjunto de entrenamiento
+    X_train = train_set.drop("class", axis=1)
+    X_train_preprocessed = preprocess_dataset(X_train)
+
+    # Guardar un resumen en archivos CSV para visualización
+    train_csv = os.path.join(RESULTS_DIR, "train_preprocessed.csv")
+    X_train_preprocessed.to_csv(train_csv, index=False)
+
+    # Verifica el tamaño del archivo CSV generado
+    print(f"Archivo CSV generado en: {train_csv}")
+    print(f"Contenido del archivo CSV: {pd.read_csv(train_csv).shape}")
