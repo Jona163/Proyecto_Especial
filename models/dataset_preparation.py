@@ -34,3 +34,23 @@ def split_dataset(df, stratify_col=None, test_size=0.4, val_size=0.5, random_sta
     print(f"Distribución de clases en el conjunto de prueba: {test[stratify_col].value_counts()}")
     
     return train, val, test
+
+# Función de preprocesamiento
+def preprocess_dataset(X):
+    """Preprocesa el dataset manejando valores nulos."""
+    print("Valores nulos antes del preprocesamiento:")
+    print(X.isnull().sum())
+    
+    # Asignar NaN a valores específicos
+    X.loc[(X["src_bytes"] > 400) & (X["src_bytes"] < 800), "src_bytes"] = np.nan
+    X.loc[(X["src_bytes"] > 500) & (X["src_bytes"] < 2000), "src_bytes"] = np.nan
+
+    # Manejo de valores nulos con imputación por mediana
+    imputer = SimpleImputer(strategy="median")
+    numeric_data = X.select_dtypes(exclude=["object"])
+    numeric_data_imputed = imputer.fit_transform(numeric_data)
+    X_imputed = pd.DataFrame(numeric_data_imputed, columns=numeric_data.columns, index=X.index)
+    
+    print("Valores nulos después del preprocesamiento:")
+    print(X_imputed.isnull().sum())
+    return X_imputed
