@@ -80,3 +80,54 @@ def evaluation():
         result = {}  
         precision = recall = f1 = "No disponible"
         confusion_matrix = roc_curve = precision_recall_curve = "No disponible"
+
+    return render_template(
+        "evaluation.html",
+        precision=precision,
+        recall=recall,
+        f1=f1,
+        confusion_matrix=confusion_matrix,
+        roc_curve=roc_curve,
+        precision_recall_curve=precision_recall_curve
+    )
+
+@app.route('/preparation')
+def preparation():
+    train_size = 75583
+    val_size = 25195
+    test_size = 25195
+    columns_after_preprocessing = 34
+    sample_preprocessed_data = [
+        {'duration': 0.10, 'protocol_type': 'tcp', 'service': 'ftp_data', 'flag': 'SF'},
+        {'duration': 0.30, 'protocol_type': 'udp', 'service': 'other', 'flag': 'SF'},
+        {'duration': 0.60, 'protocol_type': 'tcp', 'service': 'ftp_data', 'flag': 'SF'},
+        {'duration': 0.60, 'protocol_type': 'udp', 'service': 'other', 'flag': 'SF'},
+        {'duration': 0.90, 'protocol_type': 'tcp', 'service': 'ftp_data', 'flag': 'SF'},
+        {'duration': 0.00, 'protocol_type': 'tcp', 'service': 'ftp_data', 'flag': 'SF'}
+    ]
+    data_columns = [
+        'duration', 'src_bytes', 'dst_bytes', 'wrong_fragment', 'urgent', 'hot', 'num_failed_logins', 'num_compromised',
+        'root_shell', 'su_attempted', 'num_root', 'num_file_creations', 'num_shells', 'num_access_files', 'num_outbound_cmds', 
+        'count', 'srv_count', 'serror_rate', 'srv_serror_rate', 'rerror_rate', 'srv_rerror_rate', 'same_srv_rate', 
+        'diff_srv_rate', 'srv_diff_host_rate', 'dst_host_count', 'dst_host_srv_count', 'dst_host_same_srv_rate', 
+        'dst_host_diff_srv_rate', 'dst_host_same_src_port_rate', 'dst_host_srv_diff_host_rate', 'dst_host_serror_rate',
+        'dst_host_srv_serror_rate', 'dst_host_rerror_rate', 'dst_host_srv_rerror_rate'
+    ]
+
+    example_data = [
+        {'duration': 0.10, 'src_bytes': 18.0, 'dst_bytes': 53508.0, 'wrong_fragment': 0.0, 'urgent': 0.0, 'hot': 0.0, 'num_failed_logins': 0.0, 'num_compromised': 0.0, 'root_shell': 0.0, 'su_attempted': 0.0, 'num_root': 0.0, 'num_file_creations': 0.0, 'num_shells': 0.0, 'num_access_files': 1.0, 'num_outbound_cmds': 5.0, 'count': 0.0, 'srv_count': 0.0, 'serror_rate': 1.0, 'srv_serror_rate': 0.0, 'rerror_rate': 0.4, 'srv_rerror_rate': 9.0, 'same_srv_rate': 255.0, 'diff_srv_rate': 1.0, 'srv_diff_host_rate': 0.0, 'dst_host_count': 0.11, 'dst_host_srv_count': 0.03, 'dst_host_same_srv_rate': 0.0, 'dst_host_diff_srv_rate': 0.0, 'dst_host_same_src_port_rate': 0.0, 'dst_host_srv_diff_host_rate': 0.0, 'dst_host_serror_rate': 0.0, 'dst_host_srv_serror_rate': 0.0, 'dst_host_rerror_rate': 0.0, 'dst_host_srv_rerror_rate': 0.0},
+        {'duration': 0.20, 'src_bytes': 0.0, 'dst_bytes': 0.0, 'wrong_fragment': 0.0, 'urgent': 0.0, 'hot': 0.0, 'num_failed_logins': 0.0, 'num_compromised': 0.0, 'root_shell': 0.0, 'su_attempted': 0.0, 'num_root': 0.0, 'num_file_creations': 0.0, 'num_shells': 0.0, 'num_access_files': 0.0, 'num_outbound_cmds': 200.0, 'count': 4.0, 'srv_count': 1.0, 'serror_rate': 1.0, 'srv_serror_rate': 0.0, 'rerror_rate': 0.02, 'srv_rerror_rate': 0.05, 'same_srv_rate': 0.0, 'diff_srv_rate': 255.0, 'srv_diff_host_rate': 4.0, 'dst_host_count': 0.02, 'dst_host_srv_count': 0.05, 'dst_host_same_srv_rate': 0.0, 'dst_host_diff_srv_rate': 0.0, 'dst_host_same_src_port_rate': 1.0, 'dst_host_srv_diff_host_rate': 1.0, 'dst_host_serror_rate': 0.0, 'dst_host_srv_serror_rate': 0.0, 'dst_host_rerror_rate': 0.0, 'dst_host_srv_rerror_rate': 0.0},
+        {'duration': 0.30, 'src_bytes': 304.0, 'dst_bytes': 636.0, 'wrong_fragment': 0.0, 'urgent': 0.0, 'hot': 0.0, 'num_failed_logins': 0.0, 'num_compromised': 0.0, 'root_shell': 0.0, 'su_attempted': 0.0, 'num_root': 0.0, 'num_file_creations': 0.0, 'num_shells': 0.0, 'num_access_files': 0.0, 'num_outbound_cmds': 4.0, 'count': 0.0, 'srv_count': 0.0, 'serror_rate': 0.0, 'srv_serror_rate': 0.0, 'rerror_rate': 0.0, 'srv_rerror_rate': 0.0, 'same_srv_rate': 1.0, 'diff_srv_rate': 0.0, 'srv_diff_host_rate': 0.0, 'dst_host_count': 0.02, 'dst_host_srv_count': 0.02, 'dst_host_same_srv_rate': 0.0, 'dst_host_diff_srv_rate': 0.0, 'dst_host_same_src_port_rate': 0.0, 'dst_host_srv_diff_host_rate': 0.0, 'dst_host_serror_rate': 0.0, 'dst_host_srv_serror_rate': 0.0, 'dst_host_rerror_rate': 0.0, 'dst_host_srv_rerror_rate': 0.0}
+    ]
+
+    df = pd.DataFrame(example_data, columns=data_columns)
+
+    return render_template(
+        "preparation.html", 
+        train_size=train_size, 
+        val_size=val_size, 
+        test_size=test_size, 
+        columns_after_preprocessing=columns_after_preprocessing, 
+        sample_preprocessed_data=sample_preprocessed_data
+    )
+    
