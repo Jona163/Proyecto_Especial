@@ -75,3 +75,23 @@ def preprocess_pipeline(data_path):
     # Verifica el tamaño del archivo CSV generado
     print(f"Archivo CSV generado en: {train_csv}")
     print(f"Contenido del archivo CSV: {pd.read_csv(train_csv).shape}")
+
+    return {
+        "train_size": len(train_set),
+        "val_size": len(val_set),
+        "test_size": len(test_set),
+        "columns_after_preprocessing": X_train_preprocessed.shape[1],
+        "sample_preprocessed_data": train_csv
+    }
+
+# Ruta del dataset
+data_path = "datasets/KDD/KDDTrain+.arff"
+results = preprocess_pipeline(data_path)
+
+# Imprimir los resultados
+print("Tamaño de los conjuntos:")
+print(f"Tamaño del conjunto de entrenamiento: {results['train_size']}")
+print(f"Tamaño del conjunto de validación: {results['val_size']}")
+print(f"Tamaño del conjunto de prueba: {results['test_size']}")
+print(f"Columnas después del preprocesamiento: {results['columns_after_preprocessing']}")
+print(f"Archivo con datos preprocesados: {results['sample_preprocessed_data']}")
