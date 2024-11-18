@@ -131,3 +131,38 @@ def preparation():
         sample_preprocessed_data=sample_preprocessed_data
     )
     
+   
+@app.route("/visualization", methods=["GET", "POST"])
+def visualization():
+    model = load_model("visualization_model")
+
+    plots_dir = os.path.join("static", "results")
+    os.makedirs(plots_dir, exist_ok=True)
+
+    if model and hasattr(model, "visualize"):
+        results = model.visualize()
+
+        # Aquí obtienes las estadísticas descriptivas
+        if hasattr(model, "get_statistics"):
+            stats = model.get_statistics()  # Asegúrate de tener esta función en tu modelo
+        else:
+            stats = {"Error": "No se encontraron estadísticas."}
+
+        # Genera los gráficos
+        for plot_name, plot_data in results["plots"].items():
+            plot_path = os.path.join(plots_dir, f"{plot_name}.png")
+            plot_data.save(plot_path) 
+            results["plots"][plot_name] = f"/static/results/{plot_name}.png"
+
+        # Asegúrate de que `results` incluya las estadísticas
+        results["stats"] = stats
+    else:
+        results = {
+            "stats": {"Error": "No se encontraron estadísticas."},
+            "plots": {
+                "protocol_distribution": "/static/images/error.png",
+                "histograms": "/static/images/error.png",
+                "correlation_matrix": "/static/images/error.png",
+                "scatter_matrix": "/static/images/error.png"
+            }
+        }
