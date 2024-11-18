@@ -140,9 +140,9 @@ def visualization():
     if model and hasattr(model, "visualize"):
         results = model.visualize()
 
-        
+        # Aquí obtienes las estadísticas descriptivas
         if hasattr(model, "get_statistics"):
-            stats = model.get_statistics() 
+            stats = model.get_statistics()  # Asegúrate de tener esta función en tu modelo
         else:
             stats = {"Error": "No se encontraron estadísticas."}
 
@@ -152,7 +152,7 @@ def visualization():
             plot_data.save(plot_path) 
             results["plots"][plot_name] = f"/static/results/{plot_name}.png"
 
-   
+        # Asegúrate de que `results` incluya las estadísticas
         results["stats"] = stats
     else:
         results = {
