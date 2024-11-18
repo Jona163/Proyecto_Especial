@@ -34,3 +34,48 @@ def logistic_regression_pipeline(data_path):
     # División en conjuntos
     train_set, test_set = train_test_split(df, test_size=0.4, random_state=42, stratify=df["class"])
     val_set, test_set = train_test_split(test_set, test_size=0.5, random_state=42, stratify=test_set["class"])
+
+    # Separar características y etiquetas
+    def split_features_labels(df, label_col="class"):
+        X = df.drop(label_col, axis=1)
+        y = df[label_col]
+        return X, y
+
+    X_train, y_train = split_features_labels(train_set)
+    X_val, y_val = split_features_labels(val_set)
+    X_test, y_test = split_features_labels(test_set)
+
+    # Pipeline de preprocesamiento
+    preprocessor = Pipeline([
+        ("imputer", SimpleImputer(strategy="most_frequent")),
+        ("encoder", OneHotEncoder(sparse=False, handle_unknown="ignore")),  # Reemplazar sparse_output por sparse
+        ("scaler", StandardScaler())
+    ])
+
+    # Preprocesar los datos
+    X_train_prep = preprocessor.fit_transform(X_train)
+    X_val_prep = preprocessor.transform(X_val)
+    X_test_prep = preprocessor.transform(X_test)
+
+    # Entrenar el modelo
+    clf = LogisticRegression(max_iter=5000, random_state=42)
+    clf.fit(X_train_prep, y_train)
+
+    # Evaluación y métricas
+    y_pred_val = clf.predict(X_val_prep)
+
+    # Matriz de confusión
+    cm_path = os.path.join(RESULTS_DIR, "confusion_matrix.png")
+    ConfusionMatrixDisplay.from_estimator(clf, X_val_prep, y_val, values_format="d")
+    plt.savefig(cm_path)
+    plt.close()
+
+    # Graficar curvas ROC y Precision-Recall
+    roc_path = os.path.join(RESULTS_DIR, "roc_curve.png")
+    pr_path = os.path.join(RESULTS_DIR, "precision_recall_curve.png")
+    RocCurveDisplay.from_estimator(clf, X_val_prep, y_val)
+    plt.savefig(roc_path)
+    plt.close()
+    PrecisionRecallDisplay.from_estimator(clf, X_val_prep, y_val)
+    plt.savefig(pr_path)
+    plt.close()
