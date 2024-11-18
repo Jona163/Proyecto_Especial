@@ -64,3 +64,19 @@ def evaluation():
     model = load_model("evaluation_model")
     if model and hasattr(model, "evaluate"):
         result = model.evaluate()
+
+        print("Resultado de evaluate:", result)
+
+        precision = result.get("precision") if result.get("precision") else "No disponible"
+        recall = result.get("recall") if result.get("recall") else "No disponible"
+        f1 = result.get("f1") if result.get("f1") else "No disponible"
+        confusion_matrix = result.get("confusion_matrix") if result.get("confusion_matrix") else "No disponible"
+        roc_curve = result.get("roc_curve") if result.get("roc_curve") else "No disponible"
+        precision_recall_curve = result.get("precision_recall_curve") if result.get("precision_recall_curve") else "No disponible"
+
+        print("Métricas: Precision: {}, Recall: {}, F1: {}".format(precision, recall, f1))
+
+    else:
+        result = {}  
+        precision = recall = f1 = "No disponible"
+        confusion_matrix = roc_curve = precision_recall_curve = "No disponible"
