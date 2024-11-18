@@ -25,3 +25,12 @@ def load_kdd_dataset(data_path, sample_fraction=0.1):
     attributes = [attr[0] for attr in dataset["attributes"]]
     df = pd.DataFrame(dataset["data"], columns=attributes)
     return df.sample(frac=sample_fraction, random_state=42)  # Reduce el tamaño
+
+# Procesamiento y evaluación
+def logistic_regression_pipeline(data_path):
+    # Cargar el dataset reducido
+    df = load_kdd_dataset(data_path)
+    
+    # División en conjuntos
+    train_set, test_set = train_test_split(df, test_size=0.4, random_state=42, stratify=df["class"])
+    val_set, test_set = train_test_split(test_set, test_size=0.5, random_state=42, stratify=test_set["class"])
