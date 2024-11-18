@@ -49,3 +49,18 @@ def transformers():
         original_stats = transformed_stats = scatter_plot = None
         error_message = "Error: No se encontró el método 'run' en el modelo de transformadores."
 
+
+    return render_template(
+        "transformers.html", 
+        original_stats=original_stats,
+        transformed_stats=transformed_stats,
+        scatter_plot=scatter_plot,
+        error_message=error_message 
+    )
+
+
+@app.route("/evaluation", methods=["GET", "POST"])
+def evaluation():
+    model = load_model("evaluation_model")
+    if model and hasattr(model, "evaluate"):
+        result = model.evaluate()
