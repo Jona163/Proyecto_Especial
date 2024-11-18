@@ -23,3 +23,29 @@ def load_model(module_name):
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+def process_model(model):
+    try:
+        result = model.run()  
+        return result.get("original_stats", ""), result.get("transformed_stats", ""), result.get("scatter_plot", ""), None
+    except Exception as e:
+        return None, None, None, f"Error durante el procesamiento: {str(e)}"
+
+@app.route("/transformers", methods=["GET", "POST"])
+def transformers():
+    model = load_model("transformer_pipeline") 
+    if model and hasattr(model, "run"):
+        try:
+            result = model.run()  
+            original_stats = result.get("original_stats", "")
+            transformed_stats = result.get("transformed_stats", "")
+            scatter_plot = result.get("scatter_plot", "")
+            error_message = None  
+        except Exception as e:
+            error_message = f"Error durante el procesamiento: {str(e)}"
+            original_stats = transformed_stats = scatter_plot = None
+    else:
+        original_stats = transformed_stats = scatter_plot = None
+        error_message = "Error: No se encontró el método 'run' en el modelo de transformadores."
+
