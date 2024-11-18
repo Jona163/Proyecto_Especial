@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.feature_extraction.text import CountVectorizer
 
+
 app = Flask(__name__)
 
 MODEL_PATH = os.path.join(os.getcwd(), "models")
@@ -23,7 +24,6 @@ def load_model(module_name):
 @app.route("/")
 def index():
     return render_template("index.html")
-
 
 def process_model(model):
     try:
@@ -48,7 +48,6 @@ def transformers():
     else:
         original_stats = transformed_stats = scatter_plot = None
         error_message = "Error: No se encontró el método 'run' en el modelo de transformadores."
-
 
     return render_template(
         "transformers.html", 
@@ -131,7 +130,6 @@ def preparation():
         sample_preprocessed_data=sample_preprocessed_data
     )
     
-   
 @app.route("/visualization", methods=["GET", "POST"])
 def visualization():
     model = load_model("visualization_model")
@@ -142,9 +140,9 @@ def visualization():
     if model and hasattr(model, "visualize"):
         results = model.visualize()
 
-        # Aquí obtienes las estadísticas descriptivas
+        
         if hasattr(model, "get_statistics"):
-            stats = model.get_statistics()  # Asegúrate de tener esta función en tu modelo
+            stats = model.get_statistics() 
         else:
             stats = {"Error": "No se encontraron estadísticas."}
 
@@ -154,7 +152,7 @@ def visualization():
             plot_data.save(plot_path) 
             results["plots"][plot_name] = f"/static/results/{plot_name}.png"
 
-        # Asegúrate de que `results` incluya las estadísticas
+   
         results["stats"] = stats
     else:
         results = {
@@ -166,3 +164,14 @@ def visualization():
                 "scatter_matrix": "/static/images/error.png"
             }
         }
+
+    # Enviar las estadísticas y los gráficos al frontend
+    return render_template("visualization.html", stats=results["stats"], plots=results["plots"])
+
+@app.route("/logistic_regression", methods=["GET", "POST"])
+def logistic_regresion():
+    return render_template("logistic_regression.html")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
