@@ -27,3 +27,10 @@ def split_dataset(df, stratify_col=None, test_size=0.4, val_size=0.5, random_sta
     train, temp = train_test_split(df, test_size=test_size, stratify=stratify, random_state=random_state)
     stratify_temp = temp[stratify_col] if stratify_col else None
     val, test = train_test_split(temp, test_size=val_size, stratify=stratify_temp, random_state=random_state)
+    
+    # Verifica las distribuciones de clases
+    print(f"Distribución de clases en el conjunto de entrenamiento: {train[stratify_col].value_counts()}")
+    print(f"Distribución de clases en el conjunto de validación: {val[stratify_col].value_counts()}")
+    print(f"Distribución de clases en el conjunto de prueba: {test[stratify_col].value_counts()}")
+    
+    return train, val, test
