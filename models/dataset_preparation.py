@@ -19,3 +19,11 @@ def load_kdd_dataset(data_path):
     print("Primeras filas del dataset:")
     print(df.head())
     return df
+
+# Función para dividir el conjunto de datos
+def split_dataset(df, stratify_col=None, test_size=0.4, val_size=0.5, random_state=42):
+    """Divide el conjunto de datos en entrenamiento, validación y prueba."""
+    stratify = df[stratify_col] if stratify_col else None
+    train, temp = train_test_split(df, test_size=test_size, stratify=stratify, random_state=random_state)
+    stratify_temp = temp[stratify_col] if stratify_col else None
+    val, test = train_test_split(temp, test_size=val_size, stratify=stratify_temp, random_state=random_state)
