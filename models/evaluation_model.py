@@ -79,3 +79,25 @@ def logistic_regression_pipeline(data_path):
     PrecisionRecallDisplay.from_estimator(clf, X_val_prep, y_val)
     plt.savefig(pr_path)
     plt.close()
+
+    # Métricas
+    precision = precision_score(y_val, y_pred_val, pos_label="anomaly", zero_division=1)
+    recall = recall_score(y_val, y_pred_val, pos_label="anomaly", zero_division=1)
+    f1 = f1_score(y_val, y_pred_val, pos_label="anomaly", zero_division=1)
+
+    # Verificación de las métricas
+    print(f"Precision: {precision}, Recall: {recall}, F1 Score: {f1}")
+
+    return {
+        "precision": precision,
+        "recall": recall,
+        "f1": f1,
+        "confusion_matrix": cm_path,
+        "roc_curve": roc_path,
+        "precision_recall_curve": pr_path
+    }
+
+
+# Ruta del dataset
+data_path = "datasets/KDD/KDDTrain+.arff"
+results = logistic_regression_pipeline(data_path)
